@@ -6,7 +6,7 @@
 [![LICENSE](https://img.shields.io/github/license/jenkins-x-labs/helmboot.svg)](https://github.com/jenkins-x/jx-application/blob/master/LICENSE)
 [![Slack Status](https://img.shields.io/badge/slack-join_chat-white.svg?logo=slack&style=social)](https://slack.k8s.io/)
 
-`jx-application` is a small command line tool for working with [Jenkins X](https://jenkins-x.io/) pipelines.
+`jx-application` is a small command line tool for working with applications deployed in [Jenkins X](https://jenkins-x.io/) environments.
 
 ## Commands
 
