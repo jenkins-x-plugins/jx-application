@@ -1,29 +1,36 @@
 package cmd
 
 import (
-	"os"
+	"github.com/jenkins-x/jx-application/pkg/cmd/get"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
+	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 
 	"github.com/jenkins-x/jx-application/pkg/cmd/version"
 	"github.com/jenkins-x/jx-application/pkg/rootcmd"
-	"github.com/jenkins-x/jx-helpers/pkg/cobras"
-	"github.com/jenkins-x/jx/v2/pkg/cmd/clients"
-	"github.com/jenkins-x/jx/v2/pkg/cmd/get"
-	"github.com/jenkins-x/jx/v2/pkg/cmd/opts"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras"
 	"github.com/spf13/cobra"
 )
 
+// Options a few common options we tend to use in command line tools
+type Options struct {
+	options.BaseOptions
+}
+
 // Main creates the new command
 func Main() *cobra.Command {
-	f := clients.NewFactory()
-	commonOpts := opts.NewCommonOptionsWithTerm(f, os.Stdin, os.Stdout, os.Stderr)
-
-	cmd := get.NewCmdGetApplications(commonOpts)
-
-	cmd.Use = rootcmd.TopLevelCommand
-	cmd.Short = "command for viewing deployed Applications across Environments"
-
-	commonOpts.AddBaseFlags(cmd)
-
+	cmd := &cobra.Command{
+		Use:   rootcmd.TopLevelCommand,
+		Short: "Command for viewing deployed Applications across Environments",
+		Run: func(cmd *cobra.Command, args []string) {
+			err := cmd.Help()
+			if err != nil {
+				log.Logger().Errorf(err.Error())
+			}
+		},
+	}
+	o := options.BaseOptions{}
+	o.AddBaseFlags(cmd)
+	cmd.AddCommand(cobras.SplitCommand(get.NewCmdGetApplications()))
 	cmd.AddCommand(cobras.SplitCommand(version.NewCmdVersion()))
 	return cmd
 }
