@@ -1,0 +1,528 @@
+applications:
+  - environments: {}
+    sourceRepository:
+      apiVersion: jenkins.io/v1
+      kind: SourceRepository
+      metadata:
+        labels:
+          gitops.jenkins-x.io/pipeline: namespaces
+          owner: rawlingsj
+          provider: github
+          repository: testapp1
+        name: rawlingsj-testapp1
+        namespace: jx
+      spec:
+        httpCloneURL: https://github.com/rawlingsj/testapp1.git
+        org: rawlingsj
+        provider: https://github.com
+        providerKind: github
+        providerName: github
+        repo: testapp1
+        scheduler:
+          kind: ""
+          name: jx-meta-pipeline
+        url: https://github.com/rawlingsj/testapp1
+  - environments: {}
+    sourceRepository:
+      apiVersion: jenkins.io/v1
+      kind: SourceRepository
+      metadata:
+        labels:
+          gitops.jenkins-x.io/pipeline: namespaces
+          owner: rawlingsj
+          provider: github
+          repository: testapp2
+        name: rawlingsj-testapp2
+        namespace: jx
+      spec:
+        httpCloneURL: https://github.com/rawlingsj/testapp2.git
+        org: rawlingsj
+        provider: https://github.com
+        providerKind: github
+        providerName: github
+        repo: testapp2
+        scheduler:
+          kind: ""
+          name: jx-meta-pipeline
+        url: https://github.com/rawlingsj/testapp2
+  - environments: {}
+    sourceRepository:
+      apiVersion: jenkins.io/v1
+      kind: SourceRepository
+      metadata:
+        labels:
+          gitops.jenkins-x.io/pipeline: namespaces
+          owner: rawlingsj
+          provider: github
+          repository: testapp3
+        name: rawlingsj-testapp3
+        namespace: jx
+      spec:
+        httpCloneURL: https://github.com/rawlingsj/testapp3.git
+        org: rawlingsj
+        provider: https://github.com
+        providerKind: github
+        providerName: github
+        repo: testapp3
+        scheduler:
+          kind: ""
+          name: in-repo
+        url: https://github.com/rawlingsj/testapp3
+  - environments:
+      production:
+        deployments:
+          - deployment:
+              metadata:
+                labels:
+                  chart: testapp4-1.0.3
+                  draft: draft-app
+                  gitops.jenkins-x.io/pipeline: namespaces
+                name: testapp4-testapp4
+                namespace: jx-production
+              spec:
+                progressDeadlineSeconds: 600
+                replicas: 1
+                revisionHistoryLimit: 10
+                selector:
+                  matchLabels:
+                    app: testapp4-testapp4
+                strategy:
+                  rollingUpdate:
+                    maxSurge: 25%
+                    maxUnavailable: 25%
+                  type: RollingUpdate
+                template:
+                  metadata:
+                    labels:
+                      app: testapp4-testapp4
+                      draft: draft-app
+                  spec:
+                    containers:
+                      - image: gcr.io/jenkins-x-labs-bdd/testapp4:1.0.3
+                        imagePullPolicy: IfNotPresent
+                        livenessProbe:
+                          failureThreshold: 3
+                          httpGet:
+                            path: /
+                            port: 8080
+                            scheme: HTTP
+                          initialDelaySeconds: 60
+                          periodSeconds: 10
+                          successThreshold: 1
+                          timeoutSeconds: 1
+                        name: testapp4
+                        ports:
+                          - containerPort: 8080
+                            protocol: TCP
+                        readinessProbe:
+                          failureThreshold: 3
+                          httpGet:
+                            path: /
+                            port: 8080
+                            scheme: HTTP
+                          periodSeconds: 10
+                          successThreshold: 1
+                          timeoutSeconds: 1
+                        resources:
+                          limits:
+                            cpu: 400m
+                            memory: 256Mi
+                          requests:
+                            cpu: 200m
+                            memory: 128Mi
+                        terminationMessagePath: /dev/termination-log
+                        terminationMessagePolicy: File
+                    dnsPolicy: ClusterFirst
+                    restartPolicy: Always
+                    schedulerName: default-scheduler
+                    securityContext: {}
+                    terminationGracePeriodSeconds: 30
+              status:
+                availableReplicas: 1
+                replicas: 1
+                updatedReplicas: 1
+                readyReplicas: 1
+        environment:
+          apiVersion: jenkins.io/v1
+          kind: Environment
+          metadata:
+            labels:
+              env: production
+              gitops.jenkins-x.io/pipeline: namespaces
+              team: jx
+            name: production
+            namespace: jx
+          spec:
+            kind: Permanent
+            label: Production
+            namespace: jx-production
+            order: 500
+            previewGitInfo:
+              user: {}
+            promotionStrategy: Auto
+            source: {}
+            teamSettings:
+              defaultScheduler:
+                kind: ""
+                name: ""
+          status: {}
+      staging:
+        deployments:
+          - deployment:
+              metadata:
+                labels:
+                  chart: testapp4-1.0.3
+                  draft: draft-app
+                  gitops.jenkins-x.io/pipeline: namespaces
+                name: testapp4-testapp4
+                namespace: jx-staging
+              spec:
+                progressDeadlineSeconds: 600
+                replicas: 1
+                revisionHistoryLimit: 10
+                selector:
+                  matchLabels:
+                    app: testapp4-testapp4
+                strategy:
+                  rollingUpdate:
+                    maxSurge: 25%
+                    maxUnavailable: 25%
+                  type: RollingUpdate
+                template:
+                  metadata:
+                    labels:
+                      app: testapp4-testapp4
+                      draft: draft-app
+                  spec:
+                    containers:
+                      - image: gcr.io/jenkins-x-labs-bdd/testapp4:1.0.3
+                        imagePullPolicy: IfNotPresent
+                        livenessProbe:
+                          failureThreshold: 3
+                          httpGet:
+                            path: /
+                            port: 8080
+                            scheme: HTTP
+                          initialDelaySeconds: 60
+                          periodSeconds: 10
+                          successThreshold: 1
+                          timeoutSeconds: 1
+                        name: testapp4
+                        ports:
+                          - containerPort: 8080
+                            protocol: TCP
+                        readinessProbe:
+                          failureThreshold: 3
+                          httpGet:
+                            path: /
+                            port: 8080
+                            scheme: HTTP
+                          periodSeconds: 10
+                          successThreshold: 1
+                          timeoutSeconds: 1
+                        resources:
+                          limits:
+                            cpu: 400m
+                            memory: 256Mi
+                          requests:
+                            cpu: 200m
+                            memory: 128Mi
+                        terminationMessagePath: /dev/termination-log
+                        terminationMessagePolicy: File
+                    dnsPolicy: ClusterFirst
+                    restartPolicy: Always
+                    schedulerName: default-scheduler
+                    securityContext: {}
+                    terminationGracePeriodSeconds: 30
+              status:
+                availableReplicas: 1
+                replicas: 1
+                updatedReplicas: 1
+                readyReplicas: 1
+        environment:
+          apiVersion: jenkins.io/v1
+          kind: Environment
+          metadata:
+            labels:
+              env: staging
+              gitops.jenkins-x.io/pipeline: namespaces
+              team: jx
+            name: staging
+            namespace: jx
+          spec:
+            kind: Permanent
+            label: Staging
+            namespace: jx-staging
+            order: 100
+            previewGitInfo:
+              user: {}
+            promotionStrategy: Auto
+            source: {}
+            teamSettings:
+              defaultScheduler:
+                kind: ""
+                name: ""
+          status: {}
+    sourceRepository:
+      apiVersion: jenkins.io/v1
+      kind: SourceRepository
+      metadata:
+        labels:
+          gitops.jenkins-x.io/pipeline: namespaces
+          owner: rawlingsj
+          provider: github
+          repository: testapp4
+        name: rawlingsj-testapp4
+        namespace: jx
+      spec:
+        description: Imported application for rawlingsj/testapp4
+        httpCloneURL: https://github.com/rawlingsj/testapp4.git
+        org: rawlingsj
+        provider: https://github.com
+        providerKind: github
+        providerName: github
+        repo: testapp4
+        scheduler:
+          kind: ""
+          name: jx-meta-pipeline
+        url: https://github.com/rawlingsj/testapp4
+  - environments:
+      staging:
+        deployments:
+          - deployment:
+              metadata:
+                labels:
+                  chart: testapp5-1.0.0
+                  draft: draft-app
+                  gitops.jenkins-x.io/pipeline: namespaces
+                name: testapp5-testapp5
+                namespace: jx-staging
+              spec:
+                progressDeadlineSeconds: 600
+                replicas: 1
+                revisionHistoryLimit: 10
+                selector:
+                  matchLabels:
+                    app: testapp5-testapp5
+                strategy:
+                  rollingUpdate:
+                    maxSurge: 25%
+                    maxUnavailable: 25%
+                  type: RollingUpdate
+                template:
+                  metadata:
+                    labels:
+                      app: testapp5-testapp5
+                      draft: draft-app
+                  spec:
+                    containers:
+                      - image: gcr.io/jenkins-x-labs-bdd/testapp5:1.0.0
+                        imagePullPolicy: IfNotPresent
+                        livenessProbe:
+                          failureThreshold: 3
+                          httpGet:
+                            path: /
+                            port: 8080
+                            scheme: HTTP
+                          initialDelaySeconds: 60
+                          periodSeconds: 10
+                          successThreshold: 1
+                          timeoutSeconds: 1
+                        name: testapp5
+                        ports:
+                          - containerPort: 8080
+                            protocol: TCP
+                        readinessProbe:
+                          failureThreshold: 3
+                          httpGet:
+                            path: /
+                            port: 8080
+                            scheme: HTTP
+                          periodSeconds: 10
+                          successThreshold: 1
+                          timeoutSeconds: 1
+                        resources:
+                          limits:
+                            cpu: 400m
+                            memory: 256Mi
+                          requests:
+                            cpu: 200m
+                            memory: 128Mi
+                        terminationMessagePath: /dev/termination-log
+                        terminationMessagePolicy: File
+                    dnsPolicy: ClusterFirst
+                    restartPolicy: Always
+                    schedulerName: default-scheduler
+                    securityContext: {}
+                    terminationGracePeriodSeconds: 30
+              status:
+                availableReplicas: 1
+                replicas: 1
+                updatedReplicas: 1
+                readyReplicas: 1
+        environment:
+          apiVersion: jenkins.io/v1
+          kind: Environment
+          metadata:
+            labels:
+              env: staging
+              gitops.jenkins-x.io/pipeline: namespaces
+              team: jx
+            name: staging
+            namespace: jx
+          spec:
+            kind: Permanent
+            label: Staging
+            namespace: jx-staging
+            order: 100
+            previewGitInfo:
+              user: {}
+            promotionStrategy: Auto
+            source: {}
+            teamSettings:
+              defaultScheduler:
+                kind: ""
+                name: ""
+          status: {}
+    sourceRepository:
+      apiVersion: jenkins.io/v1
+      kind: SourceRepository
+      metadata:
+        labels:
+          gitops.jenkins-x.io/pipeline: namespaces
+          owner: rawlingsj
+          provider: github
+          repository: testapp5
+        name: rawlingsj-testapp5
+        namespace: jx
+      spec:
+        httpCloneURL: https://github.com/rawlingsj/testapp5.git
+        org: rawlingsj
+        provider: https://github.com
+        providerKind: github
+        providerName: github
+        repo: testapp5
+        scheduler:
+          kind: ""
+          name: in-repo
+        url: https://github.com/rawlingsj/testapp5
+  - environments:
+      staging:
+        deployments:
+          - deployment:
+              metadata:
+                labels:
+                  chart: testapp6-1.0.1
+                  draft: draft-app
+                  gitops.jenkins-x.io/pipeline: namespaces
+                name: testapp6-testapp6
+                namespace: jx-staging
+              spec:
+                progressDeadlineSeconds: 600
+                replicas: 1
+                revisionHistoryLimit: 10
+                selector:
+                  matchLabels:
+                    app: testapp6-testapp6
+                strategy:
+                  rollingUpdate:
+                    maxSurge: 25%
+                    maxUnavailable: 25%
+                  type: RollingUpdate
+                template:
+                  metadata:
+                    labels:
+                      app: testapp6-testapp6
+                      draft: draft-app
+                  spec:
+                    containers:
+                      - image: gcr.io/jenkins-x-labs-bdd/testapp6:1.0.1
+                        imagePullPolicy: IfNotPresent
+                        livenessProbe:
+                          failureThreshold: 3
+                          httpGet:
+                            path: /
+                            port: 8080
+                            scheme: HTTP
+                          initialDelaySeconds: 60
+                          periodSeconds: 10
+                          successThreshold: 1
+                          timeoutSeconds: 1
+                        name: testapp6
+                        ports:
+                          - containerPort: 8080
+                            protocol: TCP
+                        readinessProbe:
+                          failureThreshold: 3
+                          httpGet:
+                            path: /
+                            port: 8080
+                            scheme: HTTP
+                          periodSeconds: 10
+                          successThreshold: 1
+                          timeoutSeconds: 1
+                        resources:
+                          limits:
+                            cpu: 400m
+                            memory: 256Mi
+                          requests:
+                            cpu: 200m
+                            memory: 128Mi
+                        terminationMessagePath: /dev/termination-log
+                        terminationMessagePolicy: File
+                    dnsPolicy: ClusterFirst
+                    restartPolicy: Always
+                    schedulerName: default-scheduler
+                    securityContext: {}
+                    terminationGracePeriodSeconds: 30
+              status:
+                availableReplicas: 1
+                replicas: 1
+                updatedReplicas: 1
+                readyReplicas: 1
+        environment:
+          apiVersion: jenkins.io/v1
+          kind: Environment
+          metadata:
+            labels:
+              env: staging
+              gitops.jenkins-x.io/pipeline: namespaces
+              team: jx
+            name: staging
+            namespace: jx
+          spec:
+            kind: Permanent
+            label: Staging
+            namespace: jx-staging
+            order: 100
+            previewGitInfo:
+              user: {}
+            promotionStrategy: Auto
+            source: {}
+            teamSettings:
+              defaultScheduler:
+                kind: ""
+                name: ""
+          status: {}
+    sourceRepository:
+      apiVersion: jenkins.io/v1
+      kind: SourceRepository
+      metadata:
+        labels:
+          gitops.jenkins-x.io/pipeline: namespaces
+          owner: rawlingsj
+          provider: github
+          repository: testapp6
+        name: rawlingsj-testapp6
+        namespace: jx
+      spec:
+        httpCloneURL: https://github.com/rawlingsj/testapp6.git
+        org: rawlingsj
+        provider: https://github.com
+        providerKind: github
+        providerName: github
+        repo: testapp6
+        scheduler:
+          kind: ""
+          name: in-repo
+        url: https://github.com/rawlingsj/testapp6

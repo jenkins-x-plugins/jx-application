@@ -1,0 +1,69 @@
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+apiVersion: v1
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    labels:
+      gitops.jenkins-x.io/pipeline: namespaces
+    name: testapp4
+    namespace: jx-staging
+  spec:
+    rules:
+      - host: testapp4-jx-staging.test.nip.io
+        http:
+          paths:
+            - backend:
+                serviceName: testapp4
+                servicePort: 80
+
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    labels:
+      gitops.jenkins-x.io/pipeline: namespaces
+    name: testapp5
+    namespace: jx-staging
+  spec:
+    rules:
+      - host: testapp5-jx-staging.test.nip.io
+        http:
+          paths:
+            - backend:
+                serviceName: testapp5
+                servicePort: 80
+  
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    labels:
+      gitops.jenkins-x.io/pipeline: namespaces
+    name: testapp6
+    namespace: jx-staging
+  spec:
+    rules:
+      - host: testapp6-jx-staging.test.nip.io
+        http:
+          paths:
+            - backend:
+                serviceName: testapp6
+                servicePort: 80
+  
+- apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    labels:
+      gitops.jenkins-x.io/pipeline: namespaces
+    name: testapp4
+    namespace: jx-production
+  spec:
+    rules:
+      - host: testapp4-jx-production.test.nip.io
+        http:
+          paths:
+            - backend:
+                serviceName: testapp4
+                servicePort: 80
