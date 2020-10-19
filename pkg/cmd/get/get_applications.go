@@ -7,6 +7,7 @@ import (
 
 	"github.com/jenkins-x/jx-application/pkg/applications"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxclient"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxenv"
 
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
 
@@ -102,7 +103,7 @@ func NewCmdGetApplications() (*cobra.Command, *ApplicationsOptions) {
 func (o *ApplicationsOptions) Validate() error {
 	var err error
 	if o.JXClient == nil {
-		o.JXClient, _, err = jxclient.LazyCreateJXClientAndNamespace(o.JXClient, o.Namespace)
+		o.JXClient, o.Namespace, err = jxclient.LazyCreateJXClientAndNamespace(o.JXClient, o.Namespace)
 		if err != nil {
 			return errors.Wrapf(err, "failed to create jx client")
 		}
@@ -114,7 +115,13 @@ func (o *ApplicationsOptions) Validate() error {
 			return errors.Wrapf(err, "failed to create kube client")
 		}
 	}
-
+	ns, _, err := jxenv.GetDevNamespace(o.KubeClient, o.Namespace)
+	if err != nil {
+		return errors.Wrapf(err, "failed to find dev namespace")
+	}
+	if ns != "" {
+		o.Namespace = ns
+	}
 	return nil
 }
 
