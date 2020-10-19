@@ -51,7 +51,7 @@ func (e *Environment) IsPreview() bool {
 
 // Environments loops through all applications in a list and returns a map with
 // all the unique environments
-func (l List) Environments() map[string]v1.Environment {
+func (l *List) Environments() map[string]v1.Environment {
 	envs := make(map[string]v1.Environment)
 
 	for _, a := range l.Items {
@@ -66,12 +66,12 @@ func (l List) Environments() map[string]v1.Environment {
 }
 
 // Name returns the application name
-func (a Application) Name() string {
+func (a *Application) Name() string {
 	return naming.ToValidName(a.SourceRepository.Spec.Repo)
 }
 
 // Version returns the deployment version
-func (d Deployment) Version() string {
+func (d *Deployment) Version() string {
 	return getVersion(&d.Deployment.ObjectMeta)
 }
 
@@ -109,7 +109,7 @@ func getVersion(r *metav1.ObjectMeta) string {
 }
 
 // Pods returns the ratio of pods that are ready/replicas
-func (d Deployment) Pods() string {
+func (d *Deployment) Pods() string {
 	pods := ""
 	ready := d.Deployment.Status.ReadyReplicas
 
@@ -127,7 +127,7 @@ func int32ToA(n int32) string {
 }
 
 // URL returns a deployment URL
-func (d Deployment) URL(kc kubernetes.Interface, a Application) string {
+func (d *Deployment) URL(kc kubernetes.Interface, a *Application) string {
 	url, _ := services.FindServiceURL(kc, d.Deployment.Namespace, a.Name())
 	return url
 }
@@ -197,7 +197,7 @@ func getDeploymentAppNameInEnvironment(d *appsv1.Deployment, e *v1.Environment) 
 	return name, nil
 }
 
-func (l List) appendMatchingDeployments(envs map[string]*v1.Environment, deps map[string]map[string]appsv1.Deployment) error {
+func (l *List) appendMatchingDeployments(envs map[string]*v1.Environment, deps map[string]map[string]appsv1.Deployment) error {
 	for _, app := range l.Items {
 		for envName, env := range envs {
 			for i := range deps[envName] {

@@ -33,10 +33,11 @@ type ApplicationsOptions struct {
 	KubeClient kubernetes.Interface
 	JXClient   jxc.Interface
 
-	Namespace   string
-	Environment string
-	HideURL     bool
-	HidePod     bool
+	CurrentNamespace string
+	Namespace        string
+	Environment      string
+	HideURL          bool
+	HidePod          bool
 }
 
 // Applications is a map indexed by the application name then the environment name
@@ -103,7 +104,7 @@ func NewCmdGetApplications() (*cobra.Command, *ApplicationsOptions) {
 func (o *ApplicationsOptions) Validate() error {
 	var err error
 	if o.JXClient == nil {
-		o.JXClient, o.Namespace, err = jxclient.LazyCreateJXClientAndNamespace(o.JXClient, o.Namespace)
+		o.JXClient, o.CurrentNamespace, err = jxclient.LazyCreateJXClientAndNamespace(o.JXClient, o.CurrentNamespace)
 		if err != nil {
 			return errors.Wrapf(err, "failed to create jx client")
 		}
@@ -115,12 +116,12 @@ func (o *ApplicationsOptions) Validate() error {
 			return errors.Wrapf(err, "failed to create kube client")
 		}
 	}
-	ns, _, err := jxenv.GetDevNamespace(o.KubeClient, o.Namespace)
+	ns, _, err := jxenv.GetDevNamespace(o.KubeClient, o.CurrentNamespace)
 	if err != nil {
 		return errors.Wrapf(err, "failed to find dev namespace")
 	}
 	if ns != "" {
-		o.Namespace = ns
+		o.CurrentNamespace = ns
 	}
 	return nil
 }
@@ -136,7 +137,7 @@ func (o *ApplicationsOptions) Run() error {
 		return errors.Wrapf(err, "failed to validate")
 	}
 
-	list, err := applications.GetApplications(o.JXClient, o.KubeClient, o.Namespace)
+	list, err := applications.GetApplications(o.JXClient, o.KubeClient, o.CurrentNamespace)
 	if err != nil {
 		return errors.Wrap(err, "fetching applications")
 	}
@@ -154,15 +155,16 @@ func (o *ApplicationsOptions) Run() error {
 func (o *ApplicationsOptions) generateTable(list applications.List) table.Table {
 	table := o.generateTableHeaders(list)
 
-	for _, a := range list.Items {
+	for i := range list.Items {
+		a := &list.Items[i]
 		row := []string{}
 		name := a.Name()
-
-		if len(a.Environments) > 0 {
-
-			for _, k := range o.sortedKeys(list.Environments()) {
-
-				if ae, ok := a.Environments[k]; ok {
+		environments := a.Environments
+		if len(environments) > 0 {
+			envMap := list.Environments()
+			keys := o.sortedKeys(envMap)
+			for _, k := range keys {
+				if ae, ok := environments[k]; ok {
 					for _, d := range ae.Deployments {
 						name = applications.GetAppName(d.Deployment.Name, k)
 						if ae.Environment.Spec.Kind == v1.EnvironmentKindTypeEdit {
