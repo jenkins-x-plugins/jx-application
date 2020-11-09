@@ -3,7 +3,7 @@ module github.com/jenkins-x/jx-application
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/ghodss/yaml v1.0.0
-	github.com/jenkins-x/jx-api/v3 v3.0.1
+	github.com/jenkins-x/jx-api/v3 v3.0.2
 	github.com/jenkins-x/jx-helpers/v3 v3.0.8
 	github.com/jenkins-x/jx-logging/v3 v3.0.2
 	github.com/mattn/go-colorable v0.1.6 // indirect
