@@ -12,7 +12,7 @@ import (
 	extv1beta "k8s.io/api/extensions/v1beta1"
 
 	"github.com/ghodss/yaml"
-	fake2 "github.com/jenkins-x/jx-api/v3/pkg/client/clientset/versioned/fake"
+	fake2 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/fake"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/kubernetes/fake"
 
