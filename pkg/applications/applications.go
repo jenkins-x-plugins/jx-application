@@ -7,7 +7,7 @@ import (
 
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxenv"
 
-	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/core/v4beta1"
+	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	jxc "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/services"
@@ -139,7 +139,7 @@ func GetApplications(jxClient jxc.Interface, kubeClient kubernetes.Interface, na
 	}
 
 	// fetch ALL repositories
-	srList, err := jxClient.CoreV4beta1().SourceRepositories(namespace).List(context.TODO(), metav1.ListOptions{})
+	srList, err := jxClient.JenkinsV1().SourceRepositories(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return list, errors.Wrapf(err, "failed to find any SourceRepositories in namespace %s", namespace)
 	}
