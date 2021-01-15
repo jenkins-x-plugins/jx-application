@@ -13,9 +13,8 @@ require (
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	k8s.io/api v0.19.2
-	k8s.io/apimachinery v0.19.2
+	k8s.io/apimachinery v0.20.2
 	k8s.io/client-go v0.19.2
-	k8s.io/kube-openapi v0.0.0-20200923155610-8b5066479488 // indirect
 
 )
 
