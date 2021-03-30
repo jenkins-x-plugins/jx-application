@@ -7,7 +7,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
-	appsv1 "k8s.io/api/apps/v1"
 )
 
 func TestAppendMatchingDeployments(t *testing.T) {
@@ -15,7 +14,7 @@ func TestAppendMatchingDeployments(t *testing.T) {
 		name             string
 		list             List
 		environments     map[string]*v1.Environment
-		deployments      map[string]map[string]appsv1.Deployment
+		deployments      map[string]map[string]Deployment
 		wantApplications int
 		wantEnvironments int
 		wantDeployments  int
@@ -24,7 +23,7 @@ func TestAppendMatchingDeployments(t *testing.T) {
 			"No source repositories found",
 			List{},
 			make(map[string]*v1.Environment),
-			make(map[string]map[string]appsv1.Deployment),
+			make(map[string]map[string]Deployment),
 			0, 0, 0,
 		},
 		{
@@ -42,7 +41,7 @@ func TestAppendMatchingDeployments(t *testing.T) {
 				},
 			},
 			make(map[string]*v1.Environment),
-			make(map[string]map[string]appsv1.Deployment),
+			make(map[string]map[string]Deployment),
 			1, 0, 0,
 		},
 		{
@@ -67,16 +66,10 @@ func TestAppendMatchingDeployments(t *testing.T) {
 					},
 				},
 			},
-			map[string]map[string]appsv1.Deployment{
+			map[string]map[string]Deployment{
 				"staging": {
-					"jx-staging": appsv1.Deployment{
-						Spec: appsv1.DeploymentSpec{
-							Selector: &metav1.LabelSelector{
-								MatchLabels: map[string]string{
-									"app": "my-repo-name",
-								},
-							},
-						},
+					"jx-staging": Deployment{
+						Name: "my-repo-name",
 					},
 				},
 			},
@@ -116,27 +109,15 @@ func TestAppendMatchingDeployments(t *testing.T) {
 					},
 				},
 			},
-			map[string]map[string]appsv1.Deployment{
+			map[string]map[string]Deployment{
 				"staging": {
-					"jx-staging": appsv1.Deployment{
-						Spec: appsv1.DeploymentSpec{
-							Selector: &metav1.LabelSelector{
-								MatchLabels: map[string]string{
-									"app": "jx-my-repo-name",
-								},
-							},
-						},
+					"jx-staging": Deployment{
+						Name: "my-repo-name",
 					},
 				},
 				"production": {
-					"jx-production": appsv1.Deployment{
-						Spec: appsv1.DeploymentSpec{
-							Selector: &metav1.LabelSelector{
-								MatchLabels: map[string]string{
-									"app": "jx-my-repo-name",
-								},
-							},
-						},
+					"jx-production": Deployment{
+						Name: "my-repo-name",
 					},
 				},
 			},

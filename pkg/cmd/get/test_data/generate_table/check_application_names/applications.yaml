@@ -71,77 +71,10 @@ applications:
   - environments:
       production:
         deployments:
-          - deployment:
-              metadata:
-                labels:
-                  chart: testapp4-1.0.3
-                  draft: draft-app
-                  gitops.jenkins-x.io/pipeline: namespaces
-                name: testapp4-testapp4
-                namespace: jx-production
-              spec:
-                progressDeadlineSeconds: 600
-                replicas: 1
-                revisionHistoryLimit: 10
-                selector:
-                  matchLabels:
-                    app: testapp4-testapp4
-                strategy:
-                  rollingUpdate:
-                    maxSurge: 25%
-                    maxUnavailable: 25%
-                  type: RollingUpdate
-                template:
-                  metadata:
-                    labels:
-                      app: testapp4-testapp4
-                      draft: draft-app
-                  spec:
-                    containers:
-                      - image: gcr.io/jenkins-x-labs-bdd/testapp4:1.0.3
-                        imagePullPolicy: IfNotPresent
-                        livenessProbe:
-                          failureThreshold: 3
-                          httpGet:
-                            path: /
-                            port: 8080
-                            scheme: HTTP
-                          initialDelaySeconds: 60
-                          periodSeconds: 10
-                          successThreshold: 1
-                          timeoutSeconds: 1
-                        name: testapp4
-                        ports:
-                          - containerPort: 8080
-                            protocol: TCP
-                        readinessProbe:
-                          failureThreshold: 3
-                          httpGet:
-                            path: /
-                            port: 8080
-                            scheme: HTTP
-                          periodSeconds: 10
-                          successThreshold: 1
-                          timeoutSeconds: 1
-                        resources:
-                          limits:
-                            cpu: 400m
-                            memory: 256Mi
-                          requests:
-                            cpu: 200m
-                            memory: 128Mi
-                        terminationMessagePath: /dev/termination-log
-                        terminationMessagePolicy: File
-                    dnsPolicy: ClusterFirst
-                    restartPolicy: Always
-                    schedulerName: default-scheduler
-                    securityContext: {}
-                    terminationGracePeriodSeconds: 30
-              status:
-                availableReplicas: 1
-                replicas: 1
-                updatedReplicas: 1
-                readyReplicas: 1
+          - name: testapp4
+            pods: "1/1"
+            url: http://testapp4-jx-production.test.nip.io
+            version: 1.0.3
         environment:
           apiVersion: jenkins.io/v1
           kind: Environment
@@ -168,77 +101,10 @@ applications:
           status: {}
       staging:
         deployments:
-          - deployment:
-              metadata:
-                labels:
-                  chart: testapp4-1.0.3
-                  draft: draft-app
-                  gitops.jenkins-x.io/pipeline: namespaces
-                name: testapp4-testapp4
-                namespace: jx-staging
-              spec:
-                progressDeadlineSeconds: 600
-                replicas: 1
-                revisionHistoryLimit: 10
-                selector:
-                  matchLabels:
-                    app: testapp4-testapp4
-                strategy:
-                  rollingUpdate:
-                    maxSurge: 25%
-                    maxUnavailable: 25%
-                  type: RollingUpdate
-                template:
-                  metadata:
-                    labels:
-                      app: testapp4-testapp4
-                      draft: draft-app
-                  spec:
-                    containers:
-                      - image: gcr.io/jenkins-x-labs-bdd/testapp4:1.0.3
-                        imagePullPolicy: IfNotPresent
-                        livenessProbe:
-                          failureThreshold: 3
-                          httpGet:
-                            path: /
-                            port: 8080
-                            scheme: HTTP
-                          initialDelaySeconds: 60
-                          periodSeconds: 10
-                          successThreshold: 1
-                          timeoutSeconds: 1
-                        name: testapp4
-                        ports:
-                          - containerPort: 8080
-                            protocol: TCP
-                        readinessProbe:
-                          failureThreshold: 3
-                          httpGet:
-                            path: /
-                            port: 8080
-                            scheme: HTTP
-                          periodSeconds: 10
-                          successThreshold: 1
-                          timeoutSeconds: 1
-                        resources:
-                          limits:
-                            cpu: 400m
-                            memory: 256Mi
-                          requests:
-                            cpu: 200m
-                            memory: 128Mi
-                        terminationMessagePath: /dev/termination-log
-                        terminationMessagePolicy: File
-                    dnsPolicy: ClusterFirst
-                    restartPolicy: Always
-                    schedulerName: default-scheduler
-                    securityContext: {}
-                    terminationGracePeriodSeconds: 30
-              status:
-                availableReplicas: 1
-                replicas: 1
-                updatedReplicas: 1
-                readyReplicas: 1
+          - name: testapp4
+            pods: "1/1"
+            url: http://testapp4-jx-staging.test.nip.io
+            version: 1.0.3
         environment:
           apiVersion: jenkins.io/v1
           kind: Environment
@@ -289,77 +155,10 @@ applications:
   - environments:
       staging:
         deployments:
-          - deployment:
-              metadata:
-                labels:
-                  chart: testapp5-1.0.0
-                  draft: draft-app
-                  gitops.jenkins-x.io/pipeline: namespaces
-                name: testapp5-testapp5
-                namespace: jx-staging
-              spec:
-                progressDeadlineSeconds: 600
-                replicas: 1
-                revisionHistoryLimit: 10
-                selector:
-                  matchLabels:
-                    app: testapp5-testapp5
-                strategy:
-                  rollingUpdate:
-                    maxSurge: 25%
-                    maxUnavailable: 25%
-                  type: RollingUpdate
-                template:
-                  metadata:
-                    labels:
-                      app: testapp5-testapp5
-                      draft: draft-app
-                  spec:
-                    containers:
-                      - image: gcr.io/jenkins-x-labs-bdd/testapp5:1.0.0
-                        imagePullPolicy: IfNotPresent
-                        livenessProbe:
-                          failureThreshold: 3
-                          httpGet:
-                            path: /
-                            port: 8080
-                            scheme: HTTP
-                          initialDelaySeconds: 60
-                          periodSeconds: 10
-                          successThreshold: 1
-                          timeoutSeconds: 1
-                        name: testapp5
-                        ports:
-                          - containerPort: 8080
-                            protocol: TCP
-                        readinessProbe:
-                          failureThreshold: 3
-                          httpGet:
-                            path: /
-                            port: 8080
-                            scheme: HTTP
-                          periodSeconds: 10
-                          successThreshold: 1
-                          timeoutSeconds: 1
-                        resources:
-                          limits:
-                            cpu: 400m
-                            memory: 256Mi
-                          requests:
-                            cpu: 200m
-                            memory: 128Mi
-                        terminationMessagePath: /dev/termination-log
-                        terminationMessagePolicy: File
-                    dnsPolicy: ClusterFirst
-                    restartPolicy: Always
-                    schedulerName: default-scheduler
-                    securityContext: {}
-                    terminationGracePeriodSeconds: 30
-              status:
-                availableReplicas: 1
-                replicas: 1
-                updatedReplicas: 1
-                readyReplicas: 1
+          - name: testapp5
+            pods: "1/1"
+            url: http://testapp5-jx-staging.test.nip.io
+            version: 1.0.0
         environment:
           apiVersion: jenkins.io/v1
           kind: Environment
@@ -409,77 +208,10 @@ applications:
   - environments:
       staging:
         deployments:
-          - deployment:
-              metadata:
-                labels:
-                  chart: testapp6-1.0.1
-                  draft: draft-app
-                  gitops.jenkins-x.io/pipeline: namespaces
-                name: testapp6-testapp6
-                namespace: jx-staging
-              spec:
-                progressDeadlineSeconds: 600
-                replicas: 1
-                revisionHistoryLimit: 10
-                selector:
-                  matchLabels:
-                    app: testapp6-testapp6
-                strategy:
-                  rollingUpdate:
-                    maxSurge: 25%
-                    maxUnavailable: 25%
-                  type: RollingUpdate
-                template:
-                  metadata:
-                    labels:
-                      app: testapp6-testapp6
-                      draft: draft-app
-                  spec:
-                    containers:
-                      - image: gcr.io/jenkins-x-labs-bdd/testapp6:1.0.1
-                        imagePullPolicy: IfNotPresent
-                        livenessProbe:
-                          failureThreshold: 3
-                          httpGet:
-                            path: /
-                            port: 8080
-                            scheme: HTTP
-                          initialDelaySeconds: 60
-                          periodSeconds: 10
-                          successThreshold: 1
-                          timeoutSeconds: 1
-                        name: testapp6
-                        ports:
-                          - containerPort: 8080
-                            protocol: TCP
-                        readinessProbe:
-                          failureThreshold: 3
-                          httpGet:
-                            path: /
-                            port: 8080
-                            scheme: HTTP
-                          periodSeconds: 10
-                          successThreshold: 1
-                          timeoutSeconds: 1
-                        resources:
-                          limits:
-                            cpu: 400m
-                            memory: 256Mi
-                          requests:
-                            cpu: 200m
-                            memory: 128Mi
-                        terminationMessagePath: /dev/termination-log
-                        terminationMessagePolicy: File
-                    dnsPolicy: ClusterFirst
-                    restartPolicy: Always
-                    schedulerName: default-scheduler
-                    securityContext: {}
-                    terminationGracePeriodSeconds: 30
-              status:
-                availableReplicas: 1
-                replicas: 1
-                updatedReplicas: 1
-                readyReplicas: 1
+          - name: testapp6
+            pods: "1/1"
+            url: http://testapp6-jx-staging.test.nip.io
+            version: 1.0.1
         environment:
           apiVersion: jenkins.io/v1
           kind: Environment

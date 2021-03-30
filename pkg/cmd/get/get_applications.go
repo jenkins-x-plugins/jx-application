@@ -5,6 +5,10 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
+
 	"github.com/jenkins-x/jx-application/pkg/applications"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxenv"
@@ -38,6 +42,8 @@ type ApplicationsOptions struct {
 	Environment      string
 	HideURL          bool
 	HidePod          bool
+	GitClient        gitclient.Interface
+	CommandRunner    cmdrunner.CommandRunner
 }
 
 // Applications is a map indexed by the application name then the environment name
@@ -123,6 +129,12 @@ func (o *ApplicationsOptions) Validate() error {
 	if ns != "" {
 		o.CurrentNamespace = ns
 	}
+	if o.CommandRunner == nil {
+		o.CommandRunner = cmdrunner.QuietCommandRunner
+	}
+	if o.GitClient == nil {
+		o.GitClient = cli.NewCLIClient("", o.CommandRunner)
+	}
 	return nil
 }
 
@@ -137,7 +149,7 @@ func (o *ApplicationsOptions) Run() error {
 		return errors.Wrapf(err, "failed to validate")
 	}
 
-	list, err := applications.GetApplications(o.JXClient, o.KubeClient, o.CurrentNamespace)
+	list, err := applications.GetApplications(o.JXClient, o.KubeClient, o.CurrentNamespace, o.GitClient)
 	if err != nil {
 		return errors.Wrap(err, "fetching applications")
 	}
@@ -166,20 +178,15 @@ func (o *ApplicationsOptions) generateTable(list applications.List) table.Table 
 			for _, k := range keys {
 				if ae, ok := environments[k]; ok {
 					for _, d := range ae.Deployments {
-						name = applications.GetAppName(d.Deployment.Name, k)
-						if ae.Environment.Spec.Kind == v1.EnvironmentKindTypeEdit {
-							name = applications.GetEditAppName(name)
-						} else if ae.Environment.Spec.Kind == v1.EnvironmentKindTypePreview {
-							name = ae.Environment.Spec.PullRequestURL
-						}
+						name = d.Name
 						if !ae.IsPreview() {
-							row = append(row, d.Version())
+							row = append(row, d.Version)
 						}
 						if !o.HidePod {
-							row = append(row, d.Pods())
+							row = append(row, d.Pods)
 						}
 						if !o.HideURL {
-							row = append(row, d.URL(o.KubeClient, a))
+							row = append(row, d.URL)
 						}
 					}
 				} else {

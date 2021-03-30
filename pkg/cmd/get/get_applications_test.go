@@ -46,6 +46,7 @@ func TestGetApplicationsOptions_generateTable(t *testing.T) {
 				JXClient:   jxclient,
 			}
 			if got := o.generateTable(applications); !reflect.DeepEqual(got.Rows, tt.want.Rows) {
+				got.Render()
 				t.Errorf("generateTable() = %v, want %v", got, tt.want)
 			}
 		})

@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
+
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxenv"
 
 	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
@@ -17,32 +19,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 )
-
-// RevisionLabel the label used to show the revision
-const RevisionLabel = "serving.knative.dev/revision"
-
-// Deployment represents an application deployment in a single environment
-type Deployment struct {
-	*appsv1.Deployment `json:"deployment,omitempty"`
-}
-
-// Environment represents an environment in which an application has been
-// deployed
-type Environment struct {
-	v1.Environment `json:"environment,omitempty"`
-	Deployments    []Deployment `json:"deployments,omitempty"`
-}
-
-// Application represents an application in jx
-type Application struct {
-	*v1.SourceRepository `json:"sourceRepository"`
-	Environments         map[string]Environment `json:"environments"`
-}
-
-// List is a collection of applications
-type List struct {
-	Items []Application `json:"applications,omitempty"`
-}
 
 // IsPreview returns true if the environment is a preview environment
 func (e *Environment) IsPreview() bool {
@@ -68,11 +44,6 @@ func (l *List) Environments() map[string]v1.Environment {
 // Name returns the application name
 func (a *Application) Name() string {
 	return naming.ToValidName(a.SourceRepository.Spec.Repo)
-}
-
-// Version returns the deployment version
-func (d *Deployment) Version() string {
-	return getVersion(&d.Deployment.ObjectMeta)
 }
 
 // getVersion returns the version from the labels on the deployment if it can be deduced
@@ -109,13 +80,13 @@ func getVersion(r *metav1.ObjectMeta) string {
 }
 
 // Pods returns the ratio of pods that are ready/replicas
-func (d *Deployment) Pods() string {
+func Pods(d *appsv1.Deployment) string {
 	pods := ""
-	ready := d.Deployment.Status.ReadyReplicas
+	ready := d.Status.ReadyReplicas
 
-	if d.Deployment.Spec.Replicas != nil && ready > 0 {
-		replicas := int32ToA(*d.Deployment.Spec.Replicas)
-		strconv.FormatInt(int64(*d.Deployment.Spec.Replicas), 10)
+	if d.Spec.Replicas != nil && ready > 0 {
+		replicas := int32ToA(*d.Spec.Replicas)
+		strconv.FormatInt(int64(*d.Spec.Replicas), 10)
 		pods = int32ToA(ready) + "/" + replicas
 	}
 
@@ -126,14 +97,14 @@ func int32ToA(n int32) string {
 	return strconv.FormatInt(int64(n), 10)
 }
 
-// URL returns a deployment URL
-func (d *Deployment) URL(kc kubernetes.Interface, a *Application) string {
-	url, _ := services.FindServiceURL(kc, d.Deployment.Namespace, a.Name())
+// DeploymentURL returns a deployment URL
+func DeploymentURL(kc kubernetes.Interface, d *appsv1.Deployment, appName string) string {
+	url, _ := services.FindServiceURL(kc, d.Namespace, appName)
 	return url
 }
 
 // GetApplications fetches all Applications
-func GetApplications(jxClient jxc.Interface, kubeClient kubernetes.Interface, namespace string) (List, error) {
+func GetApplications(jxClient jxc.Interface, kubeClient kubernetes.Interface, namespace string, g gitclient.Interface) (List, error) {
 	list := List{
 		Items: make([]Application, 0),
 	}
@@ -167,11 +138,20 @@ func GetApplications(jxClient jxc.Interface, kubeClient kubernetes.Interface, na
 	}
 
 	// fetch deployments by environment (excluding dev)
-	deployments := make(map[string]map[string]appsv1.Deployment)
+	deployments := make(map[string]map[string]Deployment)
 	for _, env := range permanentEnvsMap {
 		if env.Spec.Kind != v1.EnvironmentKindTypeDevelopment {
-			var envDeployments map[string]appsv1.Deployment
-			envDeployments, err = getDeployments(kubeClient, env.Spec.Namespace)
+			var envDeployments map[string]Deployment
+			if env.Spec.RemoteCluster {
+				envDeployments, err = GetRemoteDeployments(g, env)
+				deployments[env.Spec.Namespace] = envDeployments
+				if err != nil {
+					return list, err
+				}
+				continue
+			}
+
+			envDeployments, err = getDeployments(kubeClient, env.Spec.Namespace, env)
 			if err != nil {
 				return list, err
 			}
@@ -197,20 +177,15 @@ func getDeploymentAppNameInEnvironment(d *appsv1.Deployment, e *v1.Environment) 
 	return name, nil
 }
 
-func (l *List) appendMatchingDeployments(envs map[string]*v1.Environment, deps map[string]map[string]appsv1.Deployment) error {
+func (l *List) appendMatchingDeployments(envs map[string]*v1.Environment, deps map[string]map[string]Deployment) error {
 	for _, app := range l.Items {
 		for envName, env := range envs {
 			for i := range deps[envName] {
 				dep := deps[envName][i]
-				depAppName, err := getDeploymentAppNameInEnvironment(&dep, env)
-				if err != nil {
-					return errors.Wrap(err, "getting app name")
-				}
-				if depAppName == app.Name() && !isCanaryAuxiliaryDeployment(&dep) {
-					depCopy := dep
+				if dep.Name == app.Name() && !dep.Canary {
 					app.Environments[env.Name] = Environment{
 						*env,
-						[]Deployment{{&depCopy}},
+						[]Deployment{dep},
 					}
 				}
 			}
@@ -218,6 +193,26 @@ func (l *List) appendMatchingDeployments(envs map[string]*v1.Environment, deps m
 	}
 
 	return nil
+}
+
+func CreateDeployment(d *appsv1.Deployment, env *v1.Environment) (Deployment, error) {
+	name := GetAppName(d.Name, d.Namespace)
+
+	answer := Deployment{
+		Name:    name,
+		Pods:    Pods(d),
+		Version: getVersion(&d.ObjectMeta),
+		Canary:  isCanaryAuxiliaryDeployment(d),
+	}
+	depAppName, err := getDeploymentAppNameInEnvironment(d, env)
+	if err != nil {
+		return answer, errors.Wrap(err, "getting app name")
+	}
+	if depAppName != "" {
+		answer.Name = depAppName
+	}
+	return answer, nil
+
 }
 
 // IsCanaryAuxiliaryDeployment returns whether this deployment has been created automatically by Flagger from a Canary object
@@ -257,15 +252,20 @@ func GetAppName(name string, namespaces ...string) string {
 }
 
 // getDeployments get deployments in the given namespace
-func getDeployments(kubeClient kubernetes.Interface, ns string) (map[string]appsv1.Deployment, error) {
-	answer := map[string]appsv1.Deployment{}
+func getDeployments(kubeClient kubernetes.Interface, ns string, env *v1.Environment) (map[string]Deployment, error) {
+	answer := map[string]Deployment{}
 	deps, err := kubeClient.AppsV1().Deployments(ns).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return answer, err
 	}
 	for i := range deps.Items {
-		d := deps.Items[i]
-		answer[d.Name] = d
+		d := &deps.Items[i]
+		deployment, err := CreateDeployment(d, env)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed to create Deployment for %s in namespace %s", d.Name, ns)
+		}
+		deployment.URL = DeploymentURL(kubeClient, d, deployment.Name)
+		answer[d.Name] = deployment
 	}
 	return answer, nil
 }
