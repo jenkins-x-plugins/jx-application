@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"github.com/jenkins-x/jx-application/pkg/cmd/get"
+	"github.com/jenkins-x-plugins/jx-application/pkg/cmd/get"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 
-	"github.com/jenkins-x/jx-application/pkg/cmd/version"
-	"github.com/jenkins-x/jx-application/pkg/rootcmd"
+	"github.com/jenkins-x-plugins/jx-application/pkg/cmd/version"
+	"github.com/jenkins-x-plugins/jx-application/pkg/rootcmd"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras"
 	"github.com/spf13/cobra"
 )

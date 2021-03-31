@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/kubernetes/fake"
 
-	"github.com/jenkins-x/jx-application/pkg/applications"
+	"github.com/jenkins-x-plugins/jx-application/pkg/applications"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/table"
 )
 
