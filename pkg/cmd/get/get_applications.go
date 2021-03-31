@@ -9,7 +9,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/cli"
 
-	"github.com/jenkins-x/jx-application/pkg/applications"
+	"github.com/jenkins-x-plugins/jx-application/pkg/applications"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxenv"
 

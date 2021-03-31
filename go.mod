@@ -1,4 +1,4 @@
-module github.com/jenkins-x/jx-application
+module github.com/jenkins-x-plugins/jx-application
 
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
