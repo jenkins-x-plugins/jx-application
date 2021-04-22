@@ -3,8 +3,8 @@ package applications
 import (
 	"path/filepath"
 
+	"github.com/jenkins-x-plugins/jx-gitops/pkg/releasereport"
 	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
-	"github.com/jenkins-x/jx-gitops/pkg/releasereport"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/files"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
 	"github.com/pkg/errors"
