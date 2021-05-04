@@ -11,10 +11,10 @@ import (
 
 	extv1beta "k8s.io/api/extensions/v1beta1"
 
-	"github.com/ghodss/yaml"
 	fake2 "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned/fake"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/kubernetes/fake"
+	"sigs.k8s.io/yaml"
 
 	"github.com/jenkins-x-plugins/jx-application/pkg/applications"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/table"
