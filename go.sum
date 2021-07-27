@@ -690,8 +690,9 @@ github.com/jcmturner/gofork v0.0.0-20190328161633-dc7c13fece03/go.mod h1:MK8+TM0
 github.com/jcmturner/gofork v1.0.0/go.mod h1:MK8+TM0La+2rjBD4jE12Kj1pCCxK7d2LK/UM3ncEo0o=
 github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869/go.mod h1:cJ6Cj7dQo+O6GJNiMx+Pa94qKj+TG8ONdKHgMNIyyag=
 github.com/jenkins-x-plugins/jx-charter v0.0.27/go.mod h1:H/NycSuFNZh5J7rD2JdHreOn3ECcBKg68LhElDTwyUM=
-github.com/jenkins-x-plugins/jx-gitops v0.3.4 h1:vlnnMp6a7kOPk8biBFND12/v2PMIhWKZuIDMvuf9VWU=
 github.com/jenkins-x-plugins/jx-gitops v0.3.4/go.mod h1:COo4Oplnvvzv0wEDxe4DzN6W+zuf6ceeF2e+8m4ubkg=
+github.com/jenkins-x-plugins/jx-gitops v0.3.6 h1:VT2pZipCMbpJAEa5oNsb5iB3v/Y125lc9NkCLkWnyWA=
+github.com/jenkins-x-plugins/jx-gitops v0.3.6/go.mod h1:COo4Oplnvvzv0wEDxe4DzN6W+zuf6ceeF2e+8m4ubkg=
 github.com/jenkins-x-plugins/jx-promote v0.0.275 h1:hT00/yZ2lBcTZFeCa9Dn9t+gIDR9P75c26B8HzqAweY=
 github.com/jenkins-x-plugins/jx-promote v0.0.275/go.mod h1:fhZdlRGHVfqWEq+Fi1c6kWVGr41r1IaWYPlNtIJpfH0=
 github.com/jenkins-x/gen-crd-api-reference-docs v0.1.6/go.mod h1:a4dzSf/nNLMMMqultm6IlV/04xq26uICEYPkSTOahWQ=
