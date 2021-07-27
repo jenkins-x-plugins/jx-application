@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/jenkins-x-plugins/jx-application/pkg/cmd/deletecmd"
 	"github.com/jenkins-x-plugins/jx-application/pkg/cmd/get"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
@@ -30,6 +31,7 @@ func Main() *cobra.Command {
 	}
 	o := options.BaseOptions{}
 	o.AddBaseFlags(cmd)
+	cmd.AddCommand(cobras.SplitCommand(deletecmd.NewCmdDelete()))
 	cmd.AddCommand(cobras.SplitCommand(get.NewCmdGetApplications()))
 	cmd.AddCommand(cobras.SplitCommand(version.NewCmdVersion()))
 	return cmd

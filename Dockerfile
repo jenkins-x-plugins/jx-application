@@ -1,6 +1,4 @@
-FROM centos:7
-
-RUN yum install -y git
+FROM ghcr.io/jenkins-x/jx-boot:latest
 
 ENTRYPOINT ["jx-application"]
 
