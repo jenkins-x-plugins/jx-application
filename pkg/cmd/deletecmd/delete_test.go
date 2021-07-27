@@ -17,6 +17,17 @@ var (
 )
 
 func TestDelete(t *testing.T) {
+	c := &cmdrunner.Command{
+		Name: "jx",
+		Args: []string{"gitops", "version"},
+	}
+	gitopsVersion, err := cmdrunner.DefaultCommandRunner(c)
+	if err != nil {
+		t.Logf("failed to find jx gitops: %s : disabling unit test\n", err.Error())
+		t.SkipNow()
+	}
+	t.Logf("found jx gitops version: %s\n", gitopsVersion)
+
 	runner := &fakerunner.FakeRunner{
 		CommandRunner: func(c *cmdrunner.Command) (string, error) {
 			if c.Name == "git" && len(c.Args) > 0 && c.Args[0] == "push" {
@@ -40,7 +51,7 @@ func TestDelete(t *testing.T) {
 	o.ScmClientFactory.ScmClient = scmClient
 	o.ScmClientFactory.GitServerURL = giturl.GitHubURL
 
-	err := o.Run()
+	err = o.Run()
 	require.NoError(t, err, "failed to create app delete PR")
 
 	require.Len(t, fakeData.PullRequests, 1, "should have 1 Pull Request created")
