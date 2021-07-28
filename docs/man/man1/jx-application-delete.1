@@ -5,7 +5,7 @@
 
 .SH NAME
 .PP
-jx\-application\-delete \- Deletes the application from the lighthouse configuration and optionally promoted namespaces
+jx\-application\-delete \- Deletes the application deployments and removes the lighthouse configuration
 
 
 .SH SYNOPSIS
@@ -15,7 +15,10 @@ jx\-application\-delete \- Deletes the application from the lighthouse configura
 
 .SH DESCRIPTION
 .PP
-Deletes the application from the lighthouse configuration and optionally promoted namespaces
+Deletes the application deployments and removes the lighthouse configuration
+
+.PP
+This command actually create a Pull Request on the development cluster git repository so you can review the changes to be made.
 
 
 .SH OPTIONS
@@ -98,12 +101,20 @@ Deletes the application from the lighthouse configuration and optionally promote
 
 .SH EXAMPLE
 .PP
-# deletes the application with the given name
+# deletes the application with the given name from the development cluster
   jx application delete \-\-name myapp
 
 .PP
+# deletes the deployed application for the remote production cluster only
+  jx application delete \-\-name myapp \-\-env production
+
+.PP
 # deletes the application with the given name with the git owner
-  jx application delete \-\-name myapp \-\-owner myorg%!(EXTRA string=jx\-gitops, string=jx\-gitops, string=jx\-gitops)
+  jx application delete \-\-name myapp \-\-owner myorg
+
+.PP
+# deletes the deployed applications but doesn't remove the '.jx/gitops/source\-config.yaml' entry \- so new releases come back
+  jx application delete \-\-name myapp \-\-owner myorg \-\-no\-source
 
 
 .SH SEE ALSO
