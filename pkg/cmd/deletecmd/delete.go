@@ -2,7 +2,6 @@ package deletecmd
 
 import (
 	"fmt"
-	"github.com/jenkins-x-plugins/jx-gitops/pkg/rootcmd"
 	"github.com/jenkins-x-plugins/jx-promote/pkg/environments"
 	"github.com/jenkins-x/go-scm/scm"
 	jxc "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
@@ -43,16 +42,24 @@ var (
 	info = termcolor.ColorInfo
 
 	cmdLong = templates.LongDesc(`
-		Deletes the application from the lighthouse configuration and optionally promoted namespaces
+		Deletes the application deployments and removes the lighthouse configuration
+
+		This command actually create a Pull Request on the development cluster git repository so you can review the changes to be made.
 
 `)
 
 	cmdExample = templates.Examples(`
-		# deletes the application with the given name
+		# deletes the application with the given name from the development cluster
 		jx application delete --name myapp
+
+		# deletes the deployed application for the remote production cluster only
+		jx application delete --name myapp --env production
 
 		# deletes the application with the given name with the git owner 
 		jx application delete --name myapp --owner myorg
+
+		# deletes the deployed applications but doesn't remove the '.jx/gitops/source-config.yaml' entry - so new releases come back
+		jx application delete --name myapp --owner myorg --no-source
 `)
 )
 
@@ -61,9 +68,9 @@ func NewCmdDelete() (*cobra.Command, *Options) {
 
 	cmd := &cobra.Command{
 		Use:     "delete",
-		Short:   "Deletes the application from the lighthouse configuration and optionally promoted namespaces",
+		Short:   "Deletes the application deployments and removes the lighthouse configuration",
 		Long:    cmdLong,
-		Example: fmt.Sprintf(cmdExample, rootcmd.BinaryName, rootcmd.BinaryName, rootcmd.BinaryName),
+		Example: cmdExample,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return o.Run()
 		},
