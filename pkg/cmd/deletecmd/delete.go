@@ -50,16 +50,16 @@ var (
 
 	cmdExample = templates.Examples(`
 		# deletes the application with the given name from the development cluster
-		jx application delete --name myapp
+		jx application delete --repo myapp
 
 		# deletes the deployed application for the remote production cluster only
-		jx application delete --name myapp --env production
+		jx application delete --repo myapp --env production
 
 		# deletes the application with the given name with the git owner 
-		jx application delete --name myapp --owner myorg
+		jx application delete --repo myapp --owner myorg
 
 		# deletes the deployed applications but doesn't remove the '.jx/gitops/source-config.yaml' entry - so new releases come back
-		jx application delete --name myapp --owner myorg --no-source
+		jx application delete --repo myapp --owner myorg --no-source
 `)
 )
 
@@ -104,7 +104,7 @@ func (o *Options) Validate() error {
 	var err error
 
 	if o.Repository == "" {
-		return options.MissingOption("name")
+		return options.MissingOption("repo")
 	}
 
 	if o.GitURL == "" {
