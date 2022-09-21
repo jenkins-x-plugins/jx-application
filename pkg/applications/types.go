@@ -12,7 +12,7 @@ type Deployment struct {
 	Version string `json:"version,omitempty"`
 	URL     string `json:"url,omitempty"`
 	Canary  bool   `json:"canary,omitempty"`
-	//*appsv1.Deployment `json:"deployment,omitempty"`
+	// *appsv1.Deployment `json:"deployment,omitempty"`
 }
 
 // Environment represents an environment in which an application has been

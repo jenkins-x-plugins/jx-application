@@ -1,19 +1,15 @@
 package deletecmd_test
 
 import (
+	"testing"
+
 	"github.com/jenkins-x-plugins/jx-application/pkg/cmd/deletecmd"
 	"github.com/jenkins-x/go-scm/scm/driver/fake"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cmdrunner/fakerunner"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient/giturl"
-	"testing"
 
 	"github.com/stretchr/testify/require"
-)
-
-var (
-	// generateTestOutput enable to regenerate the expected output
-	generateTestOutput = true
 )
 
 func TestDelete(t *testing.T) {

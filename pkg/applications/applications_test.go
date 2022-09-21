@@ -126,9 +126,8 @@ func TestAppendMatchingDeployments(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		err := test.list.appendMatchingDeployments(test.environments, test.deployments)
+		test.list.appendMatchingDeployments(test.environments, test.deployments)
 
-		assert.NoError(t, err, test.name)
 		assert.Equal(t, test.wantApplications, len(test.list.Items), test.name)
 
 		envs := test.list.Environments()
