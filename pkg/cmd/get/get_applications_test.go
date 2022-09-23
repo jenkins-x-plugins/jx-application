@@ -2,7 +2,7 @@ package get
 
 import (
 	"context"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -57,7 +57,7 @@ func TestGetApplicationsOptions_generateTable(t *testing.T) {
 func loadTestIngresses(t *testing.T, name string, kubeclient *fake.Clientset) {
 	file := filepath.Join("test_data", "generate_table", name, "ingresses.yaml")
 
-	setupData, err := ioutil.ReadFile(file)
+	setupData, err := os.ReadFile(file)
 	assert.NoError(t, err, "failed to read file")
 
 	ingresses := &extv1beta.IngressList{}
@@ -74,7 +74,7 @@ func loadTestIngresses(t *testing.T, name string, kubeclient *fake.Clientset) {
 func loadTestApplicationsList(t *testing.T, name string) applications.List {
 	file := filepath.Join("test_data", "generate_table", name, "applications.yaml")
 
-	setupData, err := ioutil.ReadFile(file)
+	setupData, err := os.ReadFile(file)
 	assert.NoError(t, err, "failed to read file")
 
 	applications := &applications.List{}

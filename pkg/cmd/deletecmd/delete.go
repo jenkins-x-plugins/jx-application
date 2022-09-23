@@ -2,6 +2,8 @@ package deletecmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/jenkins-x-plugins/jx-promote/pkg/environments"
 	"github.com/jenkins-x/go-scm/scm"
 	jxc "github.com/jenkins-x/jx-api/v4/pkg/client/clientset/versioned"
@@ -11,10 +13,8 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxenv"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
-	"github.com/jenkins-x/jx-helpers/v3/pkg/termcolor"
 	"github.com/pkg/errors"
 	"k8s.io/client-go/kubernetes"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -39,8 +39,6 @@ type Options struct {
 }
 
 var (
-	info = termcolor.ColorInfo
-
 	cmdLong = templates.LongDesc(`
 		Deletes the application deployments and removes the lighthouse configuration
 

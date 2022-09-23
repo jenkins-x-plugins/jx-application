@@ -140,30 +140,28 @@ func GetApplications(jxClient jxc.Interface, kubeClient kubernetes.Interface, na
 	// fetch deployments by environment (excluding dev)
 	deployments := make(map[string]map[string]Deployment)
 	for _, env := range permanentEnvsMap {
-		if env.Spec.Kind != v1.EnvironmentKindTypeDevelopment {
-			var envDeployments map[string]Deployment
-			if env.Spec.RemoteCluster {
-				envDeployments, err = GetRemoteDeployments(g, env)
-				deployments[env.Spec.Namespace] = envDeployments
-				if err != nil {
-					return list, err
-				}
-				continue
-			}
 
-			envDeployments, err = getDeployments(kubeClient, env.Spec.Namespace, env)
+		if env.Spec.Kind == v1.EnvironmentKindTypeDevelopment {
+			continue
+		}
+		var envDeployments map[string]Deployment
+		if env.Spec.RemoteCluster {
+			envDeployments, err = GetRemoteDeployments(g, env)
 			if err != nil {
 				return list, err
 			}
 			deployments[env.Spec.Namespace] = envDeployments
+			continue
 		}
+
+		envDeployments, err = getDeployments(kubeClient, env.Spec.Namespace, env)
+		if err != nil {
+			return list, err
+		}
+		deployments[env.Spec.Namespace] = envDeployments
 	}
 
-	err = list.appendMatchingDeployments(permanentEnvsMap, deployments)
-	if err != nil {
-		return list, err
-	}
-
+	list.appendMatchingDeployments(permanentEnvsMap, deployments)
 	return list, nil
 }
 
@@ -177,7 +175,7 @@ func getDeploymentAppNameInEnvironment(d *appsv1.Deployment, e *v1.Environment) 
 	return name, nil
 }
 
-func (l *List) appendMatchingDeployments(envs map[string]*v1.Environment, deps map[string]map[string]Deployment) error {
+func (l *List) appendMatchingDeployments(envs map[string]*v1.Environment, deps map[string]map[string]Deployment) {
 	for _, app := range l.Items {
 		for envName, env := range envs {
 			for i := range deps[envName] {
@@ -192,7 +190,6 @@ func (l *List) appendMatchingDeployments(envs map[string]*v1.Environment, deps m
 		}
 	}
 
-	return nil
 }
 
 func CreateDeployment(d *appsv1.Deployment, env *v1.Environment) (Deployment, error) {
