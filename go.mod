@@ -1,5 +1,7 @@
 module github.com/jenkins-x-plugins/jx-application
 
+go 1.19
+
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/jenkins-x-plugins/jx-gitops v0.7.33
@@ -16,6 +18,12 @@ require (
 	k8s.io/apimachinery v0.23.4
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
 	sigs.k8s.io/yaml v1.3.0
+)
+
+replace (
+	k8s.io/api => k8s.io/api v0.22.15
+	k8s.io/apimachinery => k8s.io/apimachinery v0.22.15
+	k8s.io/client-go => k8s.io/client-go v0.22.15
 )
 
 require (
@@ -94,11 +102,3 @@ require (
 	k8s.io/utils v0.0.0-20211116205334-6203023598ed // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect
 )
-
-replace (
-	k8s.io/api => k8s.io/api v0.22.15
-	k8s.io/apimachinery => k8s.io/apimachinery v0.22.15
-	k8s.io/client-go => k8s.io/client-go v0.22.15
-)
-
-go 1.18
