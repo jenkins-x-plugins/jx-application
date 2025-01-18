@@ -1,6 +1,7 @@
 package get
 
 import (
+	"fmt"
 	"os"
 	"sort"
 	"strings"
@@ -18,7 +19,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras/helper"
 
 	"github.com/jenkins-x/jx-helpers/v3/pkg/table"
-	"github.com/pkg/errors"
+
 	"k8s.io/client-go/kubernetes"
 
 	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
@@ -112,19 +113,19 @@ func (o *ApplicationsOptions) Validate() error {
 	if o.JXClient == nil {
 		o.JXClient, o.CurrentNamespace, err = jxclient.LazyCreateJXClientAndNamespace(o.JXClient, o.CurrentNamespace)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create jx client")
+			return fmt.Errorf("failed to create jx client: %w", err)
 		}
 	}
 
 	if o.KubeClient == nil {
 		o.KubeClient, err = kube.LazyCreateKubeClient(o.KubeClient)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create kube client")
+			return fmt.Errorf("failed to create kube client: %w", err)
 		}
 	}
 	ns, _, err := jxenv.GetDevNamespace(o.KubeClient, o.CurrentNamespace)
 	if err != nil {
-		return errors.Wrapf(err, "failed to find dev namespace")
+		return fmt.Errorf("failed to find dev namespace: %w", err)
 	}
 	if ns != "" {
 		o.CurrentNamespace = ns
@@ -142,16 +143,16 @@ func (o *ApplicationsOptions) Validate() error {
 func (o *ApplicationsOptions) Run() error {
 	err := o.Validate()
 	if err != nil {
-		return errors.Wrapf(err, "failed to validate")
+		return fmt.Errorf("failed to validate: %w", err)
 	}
 	err = o.BaseOptions.Validate()
 	if err != nil {
-		return errors.Wrapf(err, "failed to validate")
+		return fmt.Errorf("failed to validate: %w", err)
 	}
 
 	list, err := applications.GetApplications(o.JXClient, o.KubeClient, o.CurrentNamespace, o.GitClient)
 	if err != nil {
-		return errors.Wrap(err, "fetching applications")
+		return fmt.Errorf("fetching applications: %w", err)
 	}
 	if len(list.Items) == 0 {
 		log.Logger().Infof("No applications found")

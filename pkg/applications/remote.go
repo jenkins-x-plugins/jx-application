@@ -1,13 +1,13 @@
 package applications
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/jenkins-x-plugins/jx-gitops/pkg/releasereport"
 	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/files"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/gitclient"
-	"github.com/pkg/errors"
 )
 
 // GetRemoteDeployments finds the remote cluster's
@@ -15,18 +15,18 @@ func GetRemoteDeployments(g gitclient.Interface, env *v1.Environment) (map[strin
 	gitURL := env.Spec.Source.URL
 
 	if gitURL == "" {
-		return nil, errors.Errorf("no git URL on environment %s", env.Name)
+		return nil, fmt.Errorf("no git URL on environment %s", env.Name)
 	}
 
 	dir, err := gitclient.CloneToDir(g, gitURL, "")
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to clone git URL %s for environment %s", gitURL, env.Name)
+		return nil, fmt.Errorf("failed to clone git URL %s for environment %s: %w", gitURL, env.Name, err)
 	}
 
 	path := filepath.Join(dir, "docs", "releases.yaml")
 	exists, err := files.FileExists(path)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to check for file %s in git clone of %s", path, gitURL)
+		return nil, fmt.Errorf("failed to check for file %s in git clone of %s: %w", path, gitURL, err)
 	}
 	if !exists {
 		return nil, nil

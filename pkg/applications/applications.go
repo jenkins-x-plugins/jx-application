@@ -2,6 +2,7 @@ package applications
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/naming"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/services"
 
-	"github.com/pkg/errors"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -112,13 +112,13 @@ func GetApplications(jxClient jxc.Interface, kubeClient kubernetes.Interface, na
 	// fetch ALL repositories
 	srList, err := jxClient.JenkinsV1().SourceRepositories(namespace).List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return list, errors.Wrapf(err, "failed to find any SourceRepositories in namespace %s", namespace)
+		return list, fmt.Errorf("failed to find any SourceRepositories in namespace %s: %w", namespace, err)
 	}
 
 	// fetch all environments
 	envMap, _, err := jxenv.GetOrderedEnvironments(jxClient, namespace)
 	if err != nil {
-		return list, errors.Wrapf(err, "failed to fetch environments in namespace %s", namespace)
+		return list, fmt.Errorf("failed to fetch environments in namespace %s: %w", namespace, err)
 	}
 
 	// only keep permanent environments
@@ -203,7 +203,7 @@ func CreateDeployment(d *appsv1.Deployment, env *v1.Environment) (Deployment, er
 	}
 	depAppName, err := getDeploymentAppNameInEnvironment(d, env)
 	if err != nil {
-		return answer, errors.Wrap(err, "getting app name")
+		return answer, fmt.Errorf("getting app name: %w", err)
 	}
 	if depAppName != "" {
 		answer.Name = depAppName
@@ -259,7 +259,7 @@ func getDeployments(kubeClient kubernetes.Interface, ns string, env *v1.Environm
 		d := &deps.Items[i]
 		deployment, err := CreateDeployment(d, env)
 		if err != nil {
-			return nil, errors.Wrapf(err, "failed to create Deployment for %s in namespace %s", d.Name, ns)
+			return nil, fmt.Errorf("failed to create Deployment for %s in namespace %s: %w", d.Name, ns, err)
 		}
 		deployment.URL = DeploymentURL(kubeClient, d, deployment.Name)
 		answer[d.Name] = deployment
