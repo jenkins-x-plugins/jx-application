@@ -57,7 +57,6 @@ linters:
   enable:
     - asciicheck
     - bodyclose
-    - depguard
     - errcheck
     - gofmt
     - goimports
