@@ -75,7 +75,9 @@ linters:
     - revive
     - gocritic
     - govet
-
+issues:
+  exclude-dirs:
+    - cmd/docs
 run:
   timeout: 1h30m
 # golangci.com configuration

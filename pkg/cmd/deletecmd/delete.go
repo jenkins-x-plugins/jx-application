@@ -69,7 +69,7 @@ func NewCmdDelete() (*cobra.Command, *Options) {
 		Short:   "Deletes the application deployments and removes the lighthouse configuration",
 		Long:    cmdLong,
 		Example: cmdExample,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return o.Run()
 		},
 	}
@@ -149,7 +149,7 @@ func (o *Options) Run() error {
 	}
 
 	if o.PullRequestTitle == "" {
-		o.PullRequestTitle = fmt.Sprintf("fix: remove app " + o.AppDescription())
+		o.PullRequestTitle = fmt.Sprintf("fix: remove app %s", o.AppDescription())
 	}
 	if o.CommitTitle == "" {
 		o.CommitTitle = o.PullRequestTitle
