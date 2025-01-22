@@ -1,6 +1,8 @@
 package applications
 
-import v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
+import (
+	v1 "github.com/jenkins-x/jx-api/v4/pkg/apis/jenkins.io/v1"
+)
 
 // RevisionLabel the label used to show the revision
 const RevisionLabel = "serving.knative.dev/revision"

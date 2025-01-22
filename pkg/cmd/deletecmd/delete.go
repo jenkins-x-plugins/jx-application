@@ -13,7 +13,7 @@ import (
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxclient"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/kube/jxenv"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
-	"github.com/pkg/errors"
+
 	"k8s.io/client-go/kubernetes"
 
 	"github.com/spf13/cobra"
@@ -69,7 +69,7 @@ func NewCmdDelete() (*cobra.Command, *Options) {
 		Short:   "Deletes the application deployments and removes the lighthouse configuration",
 		Long:    cmdLong,
 		Example: cmdExample,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return o.Run()
 		},
 	}
@@ -108,15 +108,15 @@ func (o *Options) Validate() error {
 	if o.GitURL == "" {
 		o.KubeClient, o.Namespace, err = kube.LazyCreateKubeClientAndNamespace(o.KubeClient, o.Namespace)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create kube client")
+			return fmt.Errorf("failed to create kube client: %w", err)
 		}
 		o.JXClient, err = jxclient.LazyCreateJXClient(o.JXClient)
 		if err != nil {
-			return errors.Wrapf(err, "failed to create jx client")
+			return fmt.Errorf("failed to create jx client: %w", err)
 		}
 		ns, _, err := jxenv.GetDevNamespace(o.KubeClient, o.Namespace)
 		if err != nil {
-			return errors.Wrapf(err, "failed to find dev namespace in %s", o.Namespace)
+			return fmt.Errorf("failed to find dev namespace in %s: %w", o.Namespace, err)
 		}
 		if ns != "" {
 			o.Namespace = ns
@@ -124,12 +124,12 @@ func (o *Options) Validate() error {
 
 		env, err := jxenv.GetEnvironment(o.JXClient, ns, o.EnvironmentName)
 		if err != nil {
-			return errors.Wrapf(err, "failed to find Environment %s in namespace %s", o.EnvironmentName, ns)
+			return fmt.Errorf("failed to find Environment %s in namespace %s: %w", o.EnvironmentName, ns, err)
 		}
 
 		o.GitURL = env.Spec.Source.URL
 		if o.GitURL == "" {
-			return errors.Errorf("no git URL for Environment %s in namespace %s", o.EnvironmentName, ns)
+			return fmt.Errorf("no git URL for Environment %s in namespace %s", o.EnvironmentName, ns)
 		}
 		if env.Spec.RemoteCluster {
 			o.NoSourceConfig = true
@@ -145,28 +145,14 @@ func (o *Options) Validate() error {
 func (o *Options) Run() error {
 	err := o.Validate()
 	if err != nil {
-		return errors.Wrapf(err, "failed to validate options")
+		return fmt.Errorf("failed to validate options: %w", err)
 	}
 
 	if o.PullRequestTitle == "" {
-		o.PullRequestTitle = fmt.Sprintf("fix: remove app " + o.AppDescription())
+		o.PullRequestTitle = fmt.Sprintf("fix: remove app %s", o.AppDescription())
 	}
 	if o.CommitTitle == "" {
 		o.CommitTitle = o.PullRequestTitle
-	}
-	source := ""
-	details := &scm.PullRequest{
-		Source: source,
-		Title:  o.PullRequestTitle,
-		Body:   o.PullRequestBody,
-		Draft:  false,
-	}
-
-	for _, label := range o.Labels {
-		details.Labels = append(details.Labels, &scm.Label{
-			Name:        label,
-			Description: label,
-		})
 	}
 
 	o.Function = func() error {
@@ -174,9 +160,9 @@ func (o *Options) Run() error {
 		return o.DeleteApp(dir)
 	}
 
-	_, err = o.EnvironmentPullRequestOptions.Create(o.GitURL, "", details, o.AutoMerge)
+	_, err = o.EnvironmentPullRequestOptions.Create(o.GitURL, "", o.Labels, o.AutoMerge)
 	if err != nil {
-		return errors.Wrapf(err, "failed to create Pull Request on repository %s", o.GitURL)
+		return fmt.Errorf("failed to create Pull Request on repository %s: %w", o.GitURL, err)
 	}
 	return nil
 }
@@ -206,7 +192,7 @@ func (o *Options) DeleteApp(dir string) error {
 		}
 		_, err := o.CommandRunner(c)
 		if err != nil {
-			return errors.Wrapf(err, "failed to invoke %s", c.CLI())
+			return fmt.Errorf("failed to invoke %s: %w", c.CLI(), err)
 		}
 	}
 
@@ -225,7 +211,7 @@ func (o *Options) DeleteApp(dir string) error {
 	}
 	_, err := o.CommandRunner(c)
 	if err != nil {
-		return errors.Wrapf(err, "failed to invoke %s", c.CLI())
+		return fmt.Errorf("failed to invoke %s: %w", c.CLI(), err)
 	}
 	return nil
 }
