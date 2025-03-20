@@ -3,11 +3,11 @@ package cmd
 import (
 	"github.com/jenkins-x-plugins/jx-application/pkg/cmd/deletecmd"
 	"github.com/jenkins-x-plugins/jx-application/pkg/cmd/get"
+	"github.com/jenkins-x-plugins/jx-application/pkg/common"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/options"
 	"github.com/jenkins-x/jx-logging/v3/pkg/log"
 
 	"github.com/jenkins-x-plugins/jx-application/pkg/cmd/version"
-	"github.com/jenkins-x-plugins/jx-application/pkg/rootcmd"
 	"github.com/jenkins-x/jx-helpers/v3/pkg/cobras"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,9 @@ type Options struct {
 // Main creates the new command
 func Main() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   rootcmd.TopLevelCommand,
+		Annotations: map[string]string{
+			cobra.CommandDisplayNameAnnotation: common.TopLevelCommand,
+		},
 		Short: "Command for viewing deployed Applications across Environments",
 		Run: func(cmd *cobra.Command, _ []string) {
 			err := cmd.Help()
