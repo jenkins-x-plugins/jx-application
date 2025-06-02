@@ -94,8 +94,8 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/jenkins-x-plugins/jx-gitops v0.23.11 h1:qhLUuZvPosWqL0wg4yUVKDAdcTqOCae2dZRk6iMyLYc=
 github.com/jenkins-x-plugins/jx-gitops v0.23.11/go.mod h1:47MZvC74MXfudouBDZRe8GpZXg7neVuL2W2D1cH1aXE=
-github.com/jenkins-x-plugins/jx-promote v0.6.12 h1:fDdYOHJs6HAfk7BXAsNIZ588Yg7p8LG+ug92ySA4qzg=
-github.com/jenkins-x-plugins/jx-promote v0.6.12/go.mod h1:NXCmpmqRRU4nwMfmP1BjYmG22IBEAoglM92hh1nRT1A=
+github.com/jenkins-x-plugins/jx-promote v0.6.19 h1:CBcfwQaJgvoXnX+40CNDdKLIn+i+I/nwcn3sNElFF08=
+github.com/jenkins-x-plugins/jx-promote v0.6.19/go.mod h1:uLW1bisfhUsrjdO7/qJXA22ZEHcTsGu2nCa1pdEPQFU=
 github.com/jenkins-x/go-scm v1.14.58 h1:R7ZxZySGkvz7UxPdvAeQxUy9esUwrrseSPoTbxmXNt8=
 github.com/jenkins-x/go-scm v1.14.58/go.mod h1:1RPxLZndnvu31XhFZ+RTvXiHmMX70HkQ17bRupTQxGs=
 github.com/jenkins-x/jx-api/v4 v4.8.0 h1:JSQSRdVZNeWc5RKlVDU+tde+G8np3mP8cmmZq4eFQeU=

@@ -3,7 +3,7 @@ module github.com/jenkins-x-plugins/jx-application
 require (
 	github.com/cpuguy83/go-md2man v1.0.10
 	github.com/jenkins-x-plugins/jx-gitops v0.23.11
-	github.com/jenkins-x-plugins/jx-promote v0.6.12
+	github.com/jenkins-x-plugins/jx-promote v0.6.19
 	github.com/jenkins-x/go-scm v1.14.58
 	github.com/jenkins-x/jx-api/v4 v4.8.0
 	github.com/jenkins-x/jx-helpers/v3 v3.9.6
