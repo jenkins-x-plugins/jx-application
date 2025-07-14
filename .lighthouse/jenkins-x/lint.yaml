@@ -1,7 +1,6 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
-  creationTimestamp: null
   name: lint
 spec:
   pipelineSpec:
@@ -22,7 +21,8 @@ spec:
           resources: {}
         - name: make-lint
           resources: {}
-  podTemplate: {}
-  serviceAccountName: tekton-bot
-  timeout: 2h
-status: {}
+  taskRunTemplate:
+    serviceAccountName: tekton-bot
+  timeouts:
+    pipeline: 24h
+    tasks: 24h

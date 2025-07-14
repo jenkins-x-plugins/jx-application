@@ -79,6 +79,6 @@ issues:
   exclude-dirs:
     - cmd/docs
 run:
-  timeout: 1h30m
+  timeout: 24h
 # golangci.com configuration
 # https://github.com/golangci/golangci/wiki/Configuration
